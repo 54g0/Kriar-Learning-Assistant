@@ -1,7 +1,7 @@
 # Kriar-Learning Assistant
 
 A context-aware AI learning assistant that extracts relevant content from YouTube videos based on timestamps and provides intelligent Q&A capabilities.
-
+![App UI](assets/AppUI.png)
 ## Features
 
 - 🎥 YouTube video integration with transcript extraction
@@ -10,6 +10,9 @@ A context-aware AI learning assistant that extracts relevant content from YouTub
 - 💻 Code assistance and review
 - 📊 Session tracking and statistics
 - 🔧 Multiple AI model provider support (OpenAI, Groq, Google)
+
+![App UI](assets/AppUI1.png)
+
 ## Setup Instructions
 
 ### 1. Install Dependencies
