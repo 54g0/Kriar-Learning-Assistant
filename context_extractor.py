@@ -33,7 +33,9 @@ class ContextExtractor:
         """Extract video metadata using pytube"""
         try:
             data = {}
-            opts = {}
+            opts = {
+                'ffmpeg_location': '/usr/bin/ffmpeg'
+            }
             with YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(self.url, download=False)
                 data["title"] = info.get("title")
