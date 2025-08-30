@@ -18,8 +18,9 @@ class AgentState(TypedDict):
     final_result: str
 
 class KriarLearningAgent:
-    def __init__(self, model_provider="groq", model_name="openai/gpt-oss-20b"):
-        self.model = Model(model_provider, model_name)
+    def __init__(self, model_provider, model_name,api_key):
+        self.api_key = api_key
+        self.model = Model(model_provider, model_name,api_key)
         self.tools = tools
         self.context_extractor = None
 
@@ -67,7 +68,6 @@ class KriarLearningAgent:
         try:
             if self.context_extractor and state.get("timestamp") is not None:
                 print(f"Extracting context at timestamp: {state['timestamp']}")
-                # FIXED: Use get_context_at_timestamp which returns formatted text
                 context_text = self.context_extractor.get_context_at_timestamp(state["timestamp"])
                 state["context"] = context_text
                 state["metadata"] = self.context_extractor.metadata
@@ -126,7 +126,6 @@ class KriarLearningAgent:
             messages = state.get("messages", [])
             messages.append(HumanMessage(content=executor_prompt))
 
-            # Bind tools to model
             model_with_tools = self.model.bind_tools(self.tools)
             result = model_with_tools.invoke(messages[-5:])
 
@@ -148,7 +147,6 @@ class KriarLearningAgent:
 
             last_message = messages[-1]
 
-            # Check if the last message is an AI message with tool calls
             if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
                 return "use_tool"
 
@@ -159,13 +157,13 @@ class KriarLearningAgent:
     def execute_task(self, query: str, video_url: str = None, timestamp: float = 0) -> str:
         """Execute the main learning task"""
         try:
-            # Set video context if provided
+
             if video_url:
                 success = self.set_video_context(video_url, timestamp)
                 if not success:
                     return "Error: Could not load video context"
 
-            # Create initial state
+
             initial_state = AgentState(
                 messages=[],
                 query=query,
@@ -191,7 +189,4 @@ class KriarLearningAgent:
             return self.context_extractor.get_context_at_timestamp(timestamp)
         return {"error": "No video context available"}
 
-# Example usage
-def create_agent(model_provider="groq", model_name="openai/gpt-oss-20b"):
-    """Factory function to create an agent"""
-    return KriarLearningAgent(model_provider, model_name)
+
