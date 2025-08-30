@@ -34,7 +34,9 @@ class ContextExtractor:
         try:
             data = {}
             opts = {
-                'ffmpeg_location': '/usr/bin/ffmpeg'
+                "quiet": True,
+                "skip_download": True,
+                "extract_info": True,
             }
             with YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(self.url, download=False)
