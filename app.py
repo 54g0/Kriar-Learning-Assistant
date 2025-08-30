@@ -12,6 +12,7 @@ from context_extractor import ContextExtractor
 from agent import KriarLearningAgent
 from tools import tools
 from streamlit_player import st_player
+
 st.set_page_config(
     page_title="KRIAR -Learning Assistant",
     page_icon="📚",
@@ -86,7 +87,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Custom CSS for better styling
 def load_css():
     st.markdown("""
     <style>
@@ -216,23 +216,32 @@ class KriarLearningAssistant:
             st.session_state.event = None
         if 'video_url' not in st.session_state:
             st.session_state.video_url = None
+        
+        if 'api_key' not in st.session_state:
+            st.session_state.api_key = None
+        if 'model_provider' not in st.session_state:
+            st.session_state.model_provider = None
+        if 'model_name' not in st.session_state:
+            st.session_state.model_name = None
         if 'user_preferences' not in st.session_state:
             st.session_state.user_preferences = {
                 'auto_timestamp': True,
                 'response_length': 'medium',
-                'model_provider': 'groq',
-                'model_name': 'openai/gpt-oss-20b'
+                'model_provider': st.session_state.model_provider,
+                'model_name': st.session_state.model_name
             }
 
     def initialize_agent(self):
         """Initialize the learning agent"""
         try:
             if st.session_state.agent is None:
-                preferences = st.session_state.user_preferences
-                st.session_state.agent = KriarLearningAgent(
-                    model_provider=preferences['model_provider'],
-                    model_name=preferences['model_name']
-                )
+                if st.session_state.model_provider and st.session_state.model_name and st.session_state.api_key:
+                    preferences = st.session_state.user_preferences
+                    st.session_state.agent = KriarLearningAgent(
+                        model_provider=st.session_state.model_provider,
+                        model_name=st.session_state.model_name,
+                        api_key=st.session_state.api_key
+                    )
         except Exception as e:
             st.error(f"Error initializing AI agent: {e}")
     def initialize_contextextractor(self,url,target_timestamp):
@@ -254,17 +263,11 @@ class KriarLearningAssistant:
             return ""
         except:
             return ""
-
-    def create_embed_url(self, video_id: str, start_time: int = 0) -> str:
-        """Create YouTube embed URL"""
-        return f"https://www.youtube.com/embed/{video_id}?start={start_time}&enablejsapi=1&rel=0&modestbranding=1"
-
     def render_sidebar(self):
         """Render sidebar with conversation history and settings"""
         with st.sidebar:
             st.markdown('<div class="section-header">📚 Learning Sessions</div>', unsafe_allow_html=True)
 
-            # Session statistics
             total_sessions = len(st.session_state.video_sessions)
             total_questions = len(st.session_state.chat_history)
             total_code_snippets = len(st.session_state.code_history)
@@ -278,7 +281,6 @@ class KriarLearningAssistant:
             </div>
             """, unsafe_allow_html=True)
 
-            # Current video info
             if st.session_state.current_video and st.session_state.context_extractor:
                 metadata = st.session_state.context_extractor.metadata
                 st.markdown(f"""
@@ -290,36 +292,7 @@ class KriarLearningAssistant:
                 </div>
                 """, unsafe_allow_html=True)
 
-            # # Timestamp controls
-            # st.markdown('<div class="section-header">⏰ Video Controls</div>', unsafe_allow_html=True)
-
-            # # Timestamp input
-            # timestamp_input = st.number_input(
-            #     "Current Timestamp (seconds):",
-            #     min_value=0.0,
-            #     value=st.session_state.current_timestamp,
-            #     step=1.0,
-            #     key="timestamp_input"
-            # )
-
-            # if st.button("🎯 Set Context at Timestamp"):
-            #     st.session_state.current_timestamp = timestamp_input
-            #     if st.session_state.context_extractor:
-            #         context_result = st.session_state.context_extractor.get_context_at_timestamp(timestamp_input)
-            #         st.success(f"✅ Context set for {timestamp_input}s")
-
-            #         # Show context preview
-            #         if context_result.get('context_text'):
-            #             with st.expander("📄 Context Preview"):
-            #                 st.text_area(
-            #                     "Context around timestamp:",
-            #                     context_result['context_text'][:300] + "...",
-            #                     height=100,
-            #                     disabled=True
-            #                 )
-
-            # # Recent conversations
-            # st.markdown('<div class="section-header">💬 Recent Conversations</div>', unsafe_allow_html=True)
+            st.markdown('<div class="section-header">💬 Recent Conversations</div>', unsafe_allow_html=True)
 
             if st.session_state.chat_history:
                 for i, msg in enumerate(st.session_state.chat_history[-3:]):
@@ -335,7 +308,7 @@ class KriarLearningAssistant:
             else:
                 st.info("No conversations yet. Load a video and start asking questions!")
 
-            # Settings
+
             st.markdown('<div class="section-header">⚙️ Settings</div>', unsafe_allow_html=True)
 
             st.session_state.user_preferences['auto_timestamp'] = st.checkbox(
@@ -349,11 +322,7 @@ class KriarLearningAssistant:
                 index=['short', 'medium', 'detailed'].index(st.session_state.user_preferences['response_length'])
             )
 
-            st.session_state.user_preferences['model_provider'] = st.selectbox(
-                 "AI Model Provider",
-                 ['openai', 'groq', 'google'],
-                 index=['openai', 'groq', 'google'].index(st.session_state.user_preferences['model_provider'])
-            )
+            
             st.markdown("### Settings")
             if st.button("🔄 Reset Settings"):
                 for key in list(st.session_state.keys()):
@@ -363,11 +332,9 @@ class KriarLearningAssistant:
 
     def render_video_section(self):
         """Render the main video section"""
-        st.markdown('<div class="section-header">🎥 YouTube Lecture Player</div>', unsafe_allow_html=True)
 
-        # Video URL input
         if not st.session_state.get("video_loaded", False):
-            col1, col2 = st.columns([3, 1])
+            col1, col2, col3, col4 = st.columns(4)
 
             with col1:
                 video_url = st.text_input(
@@ -379,10 +346,24 @@ class KriarLearningAssistant:
                 st.session_state.video_url = video_url
 
             with col2:
+                enter_api_key = st.text_input(
+                    "Enter API Key",
+                    key="api_key_input",
+                    type="password"
+                )
+                st.session_state.api_key = enter_api_key
+            with col3:
+                model_provider = st.selectbox("Choose a model provider:", [ "groq", "google"])
+                options = {"groq": ["openai/gpt-oss-20b","openai/gpt-oss-120b","deepseek-r1-distill-llama-70b","llama-3.3-70b-versatile"], "google": "gemini-2.5-pro"}
+                item = st.selectbox("Choose an item:", options[model_provider])
+                st.session_state.model_provider = model_provider
+                st.session_state.model_name = item
+            with col4:    
                 load_video = st.button("🔄 Load Video", use_container_width=True)
 
-            # Process video URL
-            if load_video and video_url:
+
+            if load_video and video_url and enter_api_key and model_provider:
+                
                 context_extractor = ContextExtractor(video_url)
                 st.session_state.context_extractor = context_extractor
                 video_id = context_extractor.extract_youtube_video_id(video_url)
@@ -390,9 +371,7 @@ class KriarLearningAssistant:
                     try:
                         with st.spinner("🔄 Loading video and extracting transcript..."):
 
-                            # if st.session_state.agent:
-                            #     st.session_state.agent.set_video_context(video_url)
-
+         
                             st.session_state.current_video = {
                                 'id': video_id,
                                 'url': video_url,
@@ -407,7 +386,7 @@ class KriarLearningAssistant:
                 else:
                     st.error("❌ Invalid YouTube URL. Please check and try again.")
        
-        # Display video player
+
         if st.session_state.current_video:
             video_id = st.session_state.current_video['id']
             event = st.session_state.event
@@ -441,7 +420,6 @@ class KriarLearningAssistant:
                 st.session_state.current_timestamp = 0
 
 
-            # Video info
             if st.session_state.context_extractor:
                 metadata = st.session_state.context_extractor.metadata
                 st.markdown(f"""
@@ -472,7 +450,7 @@ class KriarLearningAssistant:
         """Render the Q&A chat section"""
         st.markdown('<div class="section-header">💬 Context-Aware Q&A</div>', unsafe_allow_html=True)
 
-        # Chat history display
+
         chat_container = st.container(height=400)
         with chat_container:
             if st.session_state.chat_history:
@@ -501,7 +479,7 @@ class KriarLearningAssistant:
                 </div>
                 """, unsafe_allow_html=True)
 
-        # Chat input
+
         with st.form("chat_form", clear_on_submit=True):
             col1, col2 = st.columns([4, 1])
 
@@ -522,17 +500,16 @@ class KriarLearningAssistant:
                     value=st.session_state.user_preferences['auto_timestamp']
                 )
 
-        # Process chat input
+
         if submit_chat and user_question:
             if not st.session_state.current_video:
                 st.warning("⚠️ Please load a video first to enable context-aware responses!")
                 return
 
-            # Determine timestamp to use
+
             timestamp  = st.session_state.event.data.get("playedSeconds", 0)
             st.write(f"Timestamp used: {timestamp}")
 
-            # Add user message
             user_msg = ChatMessage(
                 role="user",
                 content=user_question,
@@ -542,7 +519,7 @@ class KriarLearningAssistant:
             )
             st.session_state.chat_history.append(user_msg)
 
-            # Generate AI response using agent
+
             with st.spinner("🤔 Analyzing video context and generating response..."):
                 try:
                     if st.session_state.agent and st.session_state.context_extractor:
@@ -556,7 +533,7 @@ class KriarLearningAssistant:
 
                 except Exception as e:
                     response = f"Error generating response: {str(e)}"
-            # Add assistant message
+
             assistant_msg = ChatMessage(
                 role="assistant", 
                 content=response,
@@ -572,8 +549,6 @@ class KriarLearningAssistant:
         """Render the code assistance section"""
         st.markdown('<div class="section-header">💻 Code Assistant</div>', unsafe_allow_html=True)
 
-        # # Code input and assistance
-        # col1, col2 = st.columns([2, 1])
 
         st.markdown("**📝 Your Code:**")
         user_code = st.text_area(
@@ -645,14 +620,14 @@ class KriarLearningAssistant:
                     time.sleep(1)
                     st.rerun()
 
-            # Language selection
+    
         st.selectbox(
                 "Programming Language:",
                 ["Python", "JavaScript", "Java", "C++", "Go", "Rust"],
                 key="code_language"
             )
 
-        # Code history
+
         if st.session_state.code_history:
             with st.expander("📚 Code History", expanded=False):
                 for i, entry in enumerate(st.session_state.code_history[-3:]):
@@ -672,14 +647,11 @@ class KriarLearningAssistant:
         """Main application runner"""
         load_css()
 
-        # Header
         st.markdown('<h1 class="main-header">📚 Kriar - Learning Assistant</h1>', unsafe_allow_html=True)
         st.markdown("*An AI Learning Assistant for YouTube Lectures*")
 
-        # Render sidebar
         self.render_sidebar()
 
-        # Main content area
         main_col1, main_col2 = st.columns([2, 1])
 
         with main_col1:
@@ -694,7 +666,7 @@ class KriarLearningAssistant:
             with tab2:
                 self.render_code_section()
 
-# Application entry point
+
 def main():
     try:
         app = KriarLearningAssistant()
