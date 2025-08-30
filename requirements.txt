@@ -7,19 +7,10 @@ langchain-openai>=0.0.5
 langchain-groq>=0.0.1
 langchain-google-genai>=0.0.5
 langgraph>=0.0.40
-
-# YouTube and transcript processing
+streamlit-player
 pytube>=15.0.0
 youtube-transcript-api>=0.6.0
-
-# Environment and utilities
+yt-dlp
 python-dotenv>=0.19.0
 requests>=2.28.0
 urllib3>=1.26.0
-
-# Optional: For enhanced features
-numpy>=1.21.0
-
-# Development dependencies (optional)
-pytest>=7.0.0
-black>=22.0.0
