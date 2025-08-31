@@ -11,6 +11,11 @@ A context-aware AI learning assistant that extracts relevant content from YouTub
 - 📊 Session tracking and statistics
 - 🔧 Multiple AI model provider support (OpenAI, Groq, Google)
 
+## How to get Groq API Key for Free
+<video width="640" height="360" controls>
+  <source src="https://www.youtube.com/watch?v=TTG7Uo8lS1M" type="video/mp4">
+</video>
+
 
 ## How to Use:
 [![Watch Demo](assets/AppUI1.png)](https://drive.google.com/file/d/1vV6CIV5QWb-7QZbRp_zyDId5mApnQhNt/view?usp=sharing)
