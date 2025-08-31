@@ -13,12 +13,7 @@ A context-aware AI learning assistant that extracts relevant content from YouTub
 
 
 ## How to Use:
-
-<video width="640" height="360" controls>
-  <source src="assets/Demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
+![Watch Demo][https://drive.google.com/file/d/1vV6CIV5QWb-7QZbRp_zyDId5mApnQhNt/view?usp=sharing]
 
 ## Setup Instructions
 
