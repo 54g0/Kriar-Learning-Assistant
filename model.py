@@ -11,14 +11,14 @@ class Model:
         self.model_provider = model_provider
         self.model_name = model_name
         self.api_key = api_key or os.getenv("API_KEY")
-        self.temperature = temperature  # Fixed typo
+        self.temperature = temperature
         self.max_tokens = max_tokens
         self.verbose = verbose
 
     def create_model(self):
         if self.model_provider == "openai":
             return ChatOpenAI(
-                model=self.model_name,  # Fixed parameter name
+                model=self.model_name,
                 api_key=self.api_key,
                 temperature=self.temperature,
                 verbose=self.verbose
@@ -27,7 +27,7 @@ class Model:
             return ChatGroq(
                 api_key=self.api_key,
                 model=self.model_name,
-                temperature=self.temperature,  # Fixed parameter name
+                temperature=self.temperature,
                 verbose=self.verbose
             )
         elif self.model_provider == "google":
