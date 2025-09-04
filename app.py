@@ -278,7 +278,6 @@ class KriarLearningAssistant:
             </div>
             """, unsafe_allow_html=True)
 
-            # Current video info
             if st.session_state.current_video and st.session_state.context_extractor:
                 metadata = st.session_state.context_extractor.metadata
                 st.markdown(f"""
@@ -290,36 +289,7 @@ class KriarLearningAssistant:
                 </div>
                 """, unsafe_allow_html=True)
 
-            # # Timestamp controls
-            # st.markdown('<div class="section-header">⏰ Video Controls</div>', unsafe_allow_html=True)
-
-            # # Timestamp input
-            # timestamp_input = st.number_input(
-            #     "Current Timestamp (seconds):",
-            #     min_value=0.0,
-            #     value=st.session_state.current_timestamp,
-            #     step=1.0,
-            #     key="timestamp_input"
-            # )
-
-            # if st.button("🎯 Set Context at Timestamp"):
-            #     st.session_state.current_timestamp = timestamp_input
-            #     if st.session_state.context_extractor:
-            #         context_result = st.session_state.context_extractor.get_context_at_timestamp(timestamp_input)
-            #         st.success(f"✅ Context set for {timestamp_input}s")
-
-            #         # Show context preview
-            #         if context_result.get('context_text'):
-            #             with st.expander("📄 Context Preview"):
-            #                 st.text_area(
-            #                     "Context around timestamp:",
-            #                     context_result['context_text'][:300] + "...",
-            #                     height=100,
-            #                     disabled=True
-            #                 )
-
-            # # Recent conversations
-            # st.markdown('<div class="section-header">💬 Recent Conversations</div>', unsafe_allow_html=True)
+            
 
             if st.session_state.chat_history:
                 for i, msg in enumerate(st.session_state.chat_history[-3:]):
@@ -389,10 +359,6 @@ class KriarLearningAssistant:
                 if video_id:
                     try:
                         with st.spinner("🔄 Loading video and extracting transcript..."):
-
-                            # if st.session_state.agent:
-                            #     st.session_state.agent.set_video_context(video_url)
-
                             st.session_state.current_video = {
                                 'id': video_id,
                                 'url': video_url,
