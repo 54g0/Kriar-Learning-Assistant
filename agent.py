@@ -96,7 +96,8 @@ class KriarLearningAgent:
             video context is not given then answer the question and say no context available but here is the answer.
             this prompt also has previous messages you can use them if you want to.
             """
-            messages = [HumanMessage(content=optimization_prompt)]
+            messages = state.get("messages", [])
+            messages.append[HumanMessage(content=optimization_prompt)]
             model = self.model.create_model()
             optimized_response = model.invoke(messages[-5:])
 
