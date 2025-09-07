@@ -90,18 +90,6 @@ st.markdown(
 def load_css():
     st.markdown("""
     <style>
-    # /* 🌌 Space Gradient Background */
-    # body {
-    #     background: radial-gradient(ellipse at top, #0d0d1a 0%, #000000 100%);
-    #     background-attachment: fixed;
-    #     color: #ffffff;
-    # }
-    # .stApp {
-    #     background: radial-gradient(circle at 20% 20%, rgba(30,30,60,0.9), rgba(0,0,0,1)),
-    #                 radial-gradient(circle at 80% 80%, rgba(60,20,60,0.8), rgba(0,0,0,1));
-    #     background-blend-mode: screen;
-    # }
-
     /* Section headers */
     .section-header {
         font-size: 1.6rem;
@@ -351,7 +339,7 @@ class KriarLearningAssistant:
             with col2:
                 load_video = st.button("🔄 Load Video", use_container_width=True)
 
-            # Process video URL
+
             if load_video and video_url:
                 context_extractor = ContextExtractor(video_url)
                 st.session_state.context_extractor = context_extractor
@@ -406,8 +394,6 @@ class KriarLearningAssistant:
             else:
                 st.session_state.current_timestamp = 0
 
-
-            # Video info
             if st.session_state.context_extractor:
                 metadata = st.session_state.context_extractor.metadata
                 st.markdown(f"""
@@ -538,9 +524,6 @@ class KriarLearningAssistant:
         """Render the code assistance section"""
         st.markdown('<div class="section-header">💻 Code Assistant</div>', unsafe_allow_html=True)
 
-        # # Code input and assistance
-        # col1, col2 = st.columns([2, 1])
-
         st.markdown("**📝 Your Code:**")
         user_code = st.text_area(
                 "Enter your code here:",
@@ -660,7 +643,6 @@ class KriarLearningAssistant:
             with tab2:
                 self.render_code_section()
 
-# Application entry point
 def main():
     try:
         app = KriarLearningAssistant()
