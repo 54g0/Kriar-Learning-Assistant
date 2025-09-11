@@ -4,7 +4,7 @@ from urllib.parse import urlparse, parse_qs
 from datetime import timedelta  # Fixed typo
 from yt_dlp import YoutubeDL
 class ContextExtractor:
-    def __init__(self, url, target_timestamp=0, num_segments=20, context_window=10.0):
+    def __init__(self, url, target_timestamp=0, num_segments=20, context_window=20.0):
         self.url = url
         self.video_id = self.extract_youtube_video_id(url)
         if not self.video_id:
