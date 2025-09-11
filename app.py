@@ -90,18 +90,6 @@ st.markdown(
 def load_css():
     st.markdown("""
     <style>
-    # /* 🌌 Space Gradient Background */
-    # body {
-    #     background: radial-gradient(ellipse at top, #0d0d1a 0%, #000000 100%);
-    #     background-attachment: fixed;
-    #     color: #ffffff;
-    # }
-    # .stApp {
-    #     background: radial-gradient(circle at 20% 20%, rgba(30,30,60,0.9), rgba(0,0,0,1)),
-    #                 radial-gradient(circle at 80% 80%, rgba(60,20,60,0.8), rgba(0,0,0,1));
-    #     background-blend-mode: screen;
-    # }
-
     /* Section headers */
     .section-header {
         font-size: 1.6rem;

@@ -90,29 +90,26 @@ class ContextExtractor:
                 'metadata': self.metadata
             }
 
-        # Sort by start time
+
         all_segments.sort(key=lambda x: x['start'])
 
-        # Find segments within context window
         relevant_segments = []
         for segment in all_segments:
             segment_center = segment['start'] + (segment['duration'] / 2)
             if abs(segment_center - self.target_timestamp) <= self.context_window:
                 relevant_segments.append(segment)
 
-        # If no segments in context window, get closest ones
         if not relevant_segments:
             all_segments.sort(key=lambda x: x['distance_from_target'])
             relevant_segments = all_segments[:self.num_segments * 2]
 
-        # Sort by distance from target and select top segments
+
         relevant_segments.sort(key=lambda x: (x['distance_from_target'], x['start']))
         selected_segments = relevant_segments[:self.num_segments]
 
-        # Sort selected segments by start time for coherent reading
+
         selected_segments.sort(key=lambda x: x['start'])
 
-        # Find closest segment
         closest_segment = min(relevant_segments, key=lambda x: x['distance_from_target']) if relevant_segments else None
 
         return selected_segments
