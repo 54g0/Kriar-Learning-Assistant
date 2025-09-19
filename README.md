@@ -1,6 +1,7 @@
 # Kriar-Learning Assistant
 
 A context-aware AI learning assistant that extracts relevant content from YouTube videos based on timestamps and provides intelligent Q&A capabilities.
+👉 **Try the hosted app here:** [Kriar-Learning-Assistant (Streamlit)](https://kriar-learning-assistant-6btuj9tysavfeptq7965iu.streamlit.app/)  
 ![App UI](assets/AppUI.png)
 ## Features
 
