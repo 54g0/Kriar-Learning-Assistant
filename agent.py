@@ -7,7 +7,7 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from typing import List, Dict, Any, TypedDict, Annotated
 from langgraph.graph.message import add_messages
-
+from pylatexenc.latex2text import LatexNodes2Text
 class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
     query: str
@@ -132,7 +132,7 @@ class KriarLearningAgent:
 
             messages.append(result)
             state["messages"] = messages
-            state["final_result"] = result.content
+            state["final_result"] = LatexNodes2Text().latex_to_text(result.content)
 
             return state
         except Exception as e:
